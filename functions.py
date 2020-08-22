@@ -3,6 +3,8 @@ import pydicom as dicom
 import numpy as np
 import scipy.ndimage
 
+from masks import make_lungmask
+
 def load_scan(path):
     slices = [dicom.read_file(path + '/' + s) for s in os.listdir(path)]
     slices.sort(key = lambda x: int(x.InstanceNumber))
@@ -54,3 +56,11 @@ def resample(image, scan, new_spacing=[1,1,1]):
     image = scipy.ndimage.interpolation.zoom(image, real_resize_factor)
     
     return image, new_spacing
+
+def apply_mask(slides, mask):
+    applied_slides = []
+    
+    for slide in slides:
+        applied_slides.append(make_lungmask(slide))
+    
+    return applied_slides
